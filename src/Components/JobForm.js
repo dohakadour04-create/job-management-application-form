@@ -123,7 +123,7 @@ const JobForm = ({ onAddJob }) => {
                     type="submit"
                     className="submit-data"
                     disabled={
-                        !jobDetails.title.trim() ||
+                        jobDetails.title.trim().length < 3 ||
                         !jobDetails.category ||
                         !jobDetails.status} >
                     Add Job

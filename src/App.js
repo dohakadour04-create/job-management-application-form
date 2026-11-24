@@ -3,6 +3,7 @@ import './App.css';
 
 import JobForm from './Components/JobForm';
 import JobColumn from './Components/JobColumn';
+import JobList from './Components/JobList';
 
 import completed from './Images/completed.jpg';
 import list from './Images/list.jpg';
@@ -55,28 +56,36 @@ function App() {
         setJobs((previousJobs) => [...previousJobs, newJob]);
     };
 
-       const updateJobStatus = (jobId, newStatus) => {
+    const updateJobStatus = (jobId, newStatus) => {
         setJobs((previousJobs) =>
             previousJobs.map((job) =>
                 job.id === jobId
                     ? { ...job, status: newStatus }
                     : job
-        )
-    );
+            )
+        );
     };
 
-       const deleteJob = (jobId) => {
+    const deleteJob = (jobId) => {
         setJobs((previousJobs) =>
             previousJobs.filter((job) => job.id !== jobId)
         );
     };
 
-       const filteredJobs = jobs.filter((job) =>
+    const editJob = (updatedJob) => {
+        setJobs((previousJobs) =>
+            previousJobs.map((job) =>
+                job.id === updatedJob.id ? updatedJob : job
+            )
+        );
+    };
+
+    const filteredJobs = jobs.filter((job) =>
         job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.category.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-       const startJobs = filteredJobs.filter(
+    const startJobs = filteredJobs.filter(
         (job) => job.status === 'start'
     );
 
@@ -94,6 +103,10 @@ function App() {
             <h1>Job Management Application</h1>
 
             <JobForm onAddJob={addJob} />
+
+            <JobList
+                jobs={jobs}
+                onEditJob={editJob} />
 
             <input
                 type="text"
