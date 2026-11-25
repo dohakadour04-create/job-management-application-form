@@ -15,7 +15,7 @@ const startEditing = (job) => {
 
     setEditedJob({
         title: job.title,
-        category: job.category,
+        categories: job.categories || (job.category ? [job.category] : []),
         status: job.status
     });
 };
@@ -30,10 +30,13 @@ const handleEditChange = (event) => {
 };
 
 const saveEdit = (job) => {
-    if (!editedJob.title.trim() || !editedJob.category) {
-        alert('Please fill in all fields.');
-        return;
-    }
+    if (
+    editedJob.title.trim().length < 3 ||
+    editedJob.categories.length === 0
+) {
+    alert('Please enter a valid title and select at least one category.');
+    return;
+}
 
     onEditJob({
         ...job,
@@ -68,14 +71,56 @@ const cancelEdit = () => {
                 onChange={handleEditChange}
                 placeholder="Job title" />
 
-            <select
-                name="category"
-                value={editedJob.category}
-                onChange={handleEditChange} >
-                <option value="Read Emails">Read Emails</option>
-                <option value="Web Parsing">Web Parsing</option>
-                <option value="Send Emails">Send Emails</option>
-            </select>
+            <div className="bottom-line">
+
+                <button
+                    type="button"
+                    className={`tag ${editedJob.categories.includes('Read Emails') ? 'active' : ''}`}
+                    onClick={() => {
+                        setEditedJob((previousJob) => ({
+                            ...previousJob,
+                            categories: previousJob.categories.includes('Read Emails')
+                                ? previousJob.categories.filter((item) => item !== 'Read Emails')
+                                : previousJob.categories.length < 3
+                                    ? [...previousJob.categories, 'Read Emails']
+                                    : previousJob.categories
+                        }));
+                    }}>
+                    Read Emails
+                </button>
+
+                <button
+                    type="button"
+                    className={`tag ${editedJob.categories.includes('Web Parsing') ? 'active' : ''}`}
+                    onClick={() => {
+                        setEditedJob((previousJob) => ({
+                            ...previousJob,
+                            categories: previousJob.categories.includes('Web Parsing')
+                                ? previousJob.categories.filter((item) => item !== 'Web Parsing')
+                                : previousJob.categories.length < 3
+                                    ? [...previousJob.categories, 'Web Parsing']
+                                    : previousJob.categories
+                        }));
+                    }}>
+                    Web Parsing
+                </button>
+
+                <button
+                    type="button"
+                    className={`tag ${editedJob.categories.includes('Send Emails') ? 'active' : ''}`}
+                    onClick={() => {
+                        setEditedJob((previousJob) => ({
+                            ...previousJob,
+                            categories: previousJob.categories.includes('Send Emails')
+                                ? previousJob.categories.filter((item) => item !== 'Send Emails')
+                                : previousJob.categories.length < 3
+                                    ? [...previousJob.categories, 'Send Emails']
+                                    : previousJob.categories
+                        }));
+                    }}>
+                    Send Emails
+                </button>
+            </div>
 
             <select
                 name="status"
@@ -100,7 +145,13 @@ const cancelEdit = () => {
         <div>
             <h3>{job.title}</h3>
 
-            <p>Category: {job.category}</p>
+            <p>
+                Categories: {
+                    job.categories
+                        ? job.categories.join(', ')
+                        : job.category
+                }
+            </p>
 
             <p>Status: {job.status}</p>
 

@@ -18,7 +18,13 @@ const JobColumn = ({ title, image, jobs, onStatusChange, onDeleteJob }) => {
 
                         <h3>{job.title}</h3>
 
-                        <p>{job.category}</p>
+                        <p>
+                            Categories: {
+                                job.categories
+                                    ? job.categories.join(', ')
+                                    : job.category
+                            }
+                        </p>
 
                         <select
                             className="move-job"

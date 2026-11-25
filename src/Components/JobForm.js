@@ -4,12 +4,14 @@ import './AppForm.css';
 const JobForm = ({ onAddJob }) => {
 
     const [jobDetails, setJobDetails] = useState({
-        title: '',
-        category: '',
-        status: 'start'
-    });
+    title: '',
+    categories: [],
+    status: 'start'
+});
 
     const [darkMode, setDarkMode] = useState(false);
+
+    const [categorySearch, setCategorySearch] = useState('');
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -20,23 +22,49 @@ const JobForm = ({ onAddJob }) => {
         }));
     };
 
-    const resetForm = () => {
-        setJobDetails({
-            title: '',
-            category: '',
-            status: 'start'
+
+    const handleCategoryToggle = (category) => {
+        setJobDetails((previousDetails) => {
+            const isSelected = previousDetails.categories.includes(category);
+
+            if (isSelected) {
+                return {
+                    ...previousDetails,
+                    categories: previousDetails.categories.filter(
+                        (item) => item !== category
+                    )
+                };
+            } else {
+                if (previousDetails.categories.length >= 3) {
+                    alert('You can select a maximum of 3 categories.');
+                    return previousDetails;
+                }
+
+                return {
+                    ...previousDetails,
+                    categories: [...previousDetails.categories, category]
+                };
+            }
         });
     };
+
+    const resetForm = () => {
+    setJobDetails({
+        title: '',
+        categories: [],
+        status: 'start'
+    });
+};
 
     const handleSubmit = (event) => {
         event.preventDefault();
 
         if (
-            !jobDetails.title.trim() ||
-            !jobDetails.category ||
+            jobDetails.title.trim().length < 3 ||
+            jobDetails.categories.length === 0 ||
             !jobDetails.status
         ) {
-            alert('Please fill in all fields.');
+            alert('Please enter a valid title and select at least one category.');
             return;
         }
 
@@ -73,39 +101,57 @@ const JobForm = ({ onAddJob }) => {
                     onChange={handleInputChange} />
 
                 <div className="form-details">
+
+                    <input
+                    type="text"
+                    placeholder="Search categories..."
+                    value={categorySearch}
+                    onChange={(event) => setCategorySearch(event.target.value)}
+                    className="category-search" />
+
                     <div className="bottom-line">
 
-                        <button
-                            type="button"
-                            className={`tag ${jobDetails.category === 'Read Emails' ? 'active' : ''}`}
-                            onClick={() => setJobDetails((previousDetails) => ({
-                                ...previousDetails,
-                                category: 'Read Emails'
-                            }))} >
-                            Read Emails
-                        </button>
-
-                        <button
-                            type="button"
-                            className={`tag ${jobDetails.category === 'Web Parsing' ? 'active' : ''}`}
-                            onClick={() => setJobDetails((previousDetails) => ({
-                                ...previousDetails,
-                                category: 'Web Parsing'
-                            }))} >
-                            Web Parsing
-                        </button>
-
-                        <button
-                            type="button"
-                            className={`tag ${jobDetails.category === 'Send Emails' ? 'active' : ''}`}
-                            onClick={() => setJobDetails((previousDetails) => ({
-                                ...previousDetails,
-                                category: 'Send Emails'
-                            }))} >
-                            Send Emails
-                        </button>
+                        {['Read Emails', 'Web Parsing', 'Send Emails']
+                            .filter((category) =>
+                                category.toLowerCase().includes(categorySearch.toLowerCase())
+                            )
+                            .map((category) => (
+                                <button
+                                    key={category}
+                                    type="button"
+                                    className={`tag ${jobDetails.categories.includes(category) ? 'active' : ''}`}
+                                    onClick={() => handleCategoryToggle(category)} >
+                                    {category}
+                                </button>
+                            ))}
 
                     </div>
+
+                    <div className="selected-categories">
+
+                        <h4>Selected Categories:</h4>
+
+                        {jobDetails.categories.length === 0 ? (
+                            <p>No categories selected.</p>
+                        ) : (
+                            <ul>
+                                {jobDetails.categories.map((category) => (
+                                    <li key={category}>{category}</li>
+                                ))}
+                            </ul>
+                        )}
+
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={() => setJobDetails((previousDetails) => ({
+                            ...previousDetails,
+                            categories: []
+                        }))}
+                        className="reset-button" >
+                        Clear Categories
+                    </button>
                 </div>
 
                 <select
@@ -124,8 +170,9 @@ const JobForm = ({ onAddJob }) => {
                     className="submit-data"
                     disabled={
                         jobDetails.title.trim().length < 3 ||
-                        !jobDetails.category ||
-                        !jobDetails.status} >
+                        jobDetails.categories.length === 0 ||
+                        !jobDetails.status
+                    } >
                     Add Job
                 </button>
 
