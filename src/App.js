@@ -8,6 +8,9 @@ import JobList from './Components/JobList';
 import completed from './Images/completed.jpg';
 import list from './Images/list.jpg';
 import loading from './Images/loading.jpg';
+import CategorySelector from './Components/CategorySelector';
+import JobManager from './Components/JobManager';
+import JobManagerColumn from './Components/JobManagerColumn';
 
 function App() {
 
@@ -107,6 +110,7 @@ function App() {
 
             <JobForm onAddJob={addJob} />
 
+
             <JobList
                 jobs={jobs}
                 onEditJob={editJob} />
@@ -142,6 +146,15 @@ function App() {
                     onDeleteJob={deleteJob} />
 
             </div>
+
+            <hr />
+
+            <CategorySelector />
+
+            <JobManager />
+
+            <JobManagerColumn />
+
 
         </div>
     );
