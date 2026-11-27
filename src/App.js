@@ -84,7 +84,7 @@ function App() {
     };
 
     const filteredJobs = jobs.filter((job) =>
-    job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (job.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (job.category || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (job.categories || []).some((category) =>
         category.toLowerCase().includes(searchTerm.toLowerCase())

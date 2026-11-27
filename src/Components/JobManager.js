@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import JobManagerColumn from './JobManagerColumn';
 import './JobManager.css';
 
 const JobManager = () => {
 
-    const [jobs, setJobs] = useState([
-    ]);
+    const [jobs, setJobs] = useState(() => {
+    const savedJobs = localStorage.getItem('jobs');
+    return savedJobs ? JSON.parse(savedJobs) : [];
+});
+
+useEffect(() => {
+    localStorage.setItem('jobs', JSON.stringify(jobs));
+}, [jobs]);
 
     const [jobDetails, setJobDetails] = useState({
     activity: '',
@@ -40,7 +46,14 @@ const resetForm = () => {
 };
 
 const deleteJob = (jobId) => {
-    setJobs(jobs.filter((job) => job.id !== jobId));
+    setJobs((prevJobs) =>
+        prevJobs.filter((job) => job.id !== jobId)
+    );
+};
+
+const clearAllJobs = () => {
+    setJobs([]);
+    localStorage.removeItem('jobs');
 };
 
 
@@ -66,6 +79,10 @@ const handleSubmit = (e) => {
         <div className="job-manager">
 
             <h1>Job Manager</h1>
+
+            <button onClick={clearAllJobs}>
+                Clear All Jobs
+            </button>
 
             <form onSubmit={handleSubmit}>
 
